@@ -106,18 +106,25 @@ class MainActivity : AppCompatActivity(),View.OnClickListener {
     fun backButtonClicked(view: View){
         //判断应该撤销运算符还是数字
         if(numsList.size>operatorsList.size){
-            //撤销数字
-            numsList.removeLast()
-            isNumStart=true
-            currentInputNumSB.clear()
+            if(numsList.size>0){
+                //撤销数字
+                numsList.removeLast()
+                isNumStart=true
+                currentInputNumSB.clear()
+            }
         }else{
-            //撤销运算符
-            operatorsList.removeLast()
-            isNumStart=false
-            //将最后一个元素追加到StringBuilder中
-            currentInputNumSB.append(numsList.last())
+            if(operatorsList.size>0){
+                //撤销运算符
+                operatorsList.removeLast()
+                isNumStart=false
+                if(numsList.size>0){
+                    //将最后一个元素追加到StringBuilder中
+                    currentInputNumSB.append(numsList.last())
+                }
+            }
         }
         showUI()
+        calculate()
     }
 
     //等于键
@@ -167,11 +174,36 @@ class MainActivity : AppCompatActivity(),View.OnClickListener {
                         //判断是不是最后一个或者后面不是乘除--直接运算
                         if(i==operatorsList.size-1 ||
                             (operatorsList[i+1]!="x" && operatorsList[i+1]!="÷")){
-                            param2=numsList[i+1].toFloat()
-                            param1=realCalculate(param1,operator,param2)
+                            if(i<numsList.size-1){
+                                param2=numsList[i+1].toFloat()
+                                param1=realCalculate(param1,operator,param2)
+                            }
                         }else{
                             //后面有而且是乘除
-                            //var mparm1=numsList[]
+                            var j=i+1
+                            var mparm1=numsList[j].toFloat()
+                            var mparm2=0.0f
+                            while(true){
+                                //获取j对应的运算符
+                                if(operatorsList[j]=="x"||operatorsList[j]=="÷"){
+                                    if(j<operatorsList.size-1){
+                                        mparm2=numsList[j+1].toFloat()
+                                        mparm1=realCalculate(mparm1,operatorsList[j],mparm2)
+                                    }
+                                }else{
+                                    //之前运算符后所有连续乘除都运算了--其结果为之前运算符的第二个运算数
+                                    break
+                                }
+                                j++
+                                //已经运算到最后了
+                                if(j==operatorsList.size){
+                                    break
+                                }
+                            }
+                            param2=mparm1
+                            param1=realCalculate(param1,operator,param2)
+                            //索引值代表运算到那一位，-1防止遗漏一位
+                            i=j-1
                         }
                     }
                     i++
@@ -183,6 +215,8 @@ class MainActivity : AppCompatActivity(),View.OnClickListener {
             }
             //显示对应的结果
             result_textview.text= String.format("%.1f",param1)
+        }else{
+            result_textview.text="0"
         }
     }
 
