@@ -2,6 +2,7 @@ package com.example.myandroidproject
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.TextView
 import kotlinx.android.synthetic.main.activity_main.*
@@ -79,7 +80,8 @@ class MainActivity : AppCompatActivity(),View.OnClickListener {
         if(flag){
             currentInputNumSB.append(tv.text)
             if(isNumStart){
-                //判断是否为正负--即numsList中最后一个存的+或-
+                //当前输入的是一个新的数字，添加到数组中
+                //判断是否为正负
                 if(plusOrMinus==false){
                     var num=tv.text.toString().toDouble();
                     //算出这个位置应该存的值
@@ -88,14 +90,17 @@ class MainActivity : AppCompatActivity(),View.OnClickListener {
                     plusOrMinus==true
                     isNumStart=false
                 } else{
-                    //当前输入的是一个新的数字，添加到数组中
                     numsList.add(tv.text.toString())
                     //更改isNumStart状态
                     isNumStart=false
                 }
             }else{
-            //用当前的数字去替换数组中最后一个元素
-            numsList[numsList.size-1]=currentInputNumSB.toString()
+                if(numsList[numsList.size-1]=="0" && tv.text.toString()!="."){
+                    numsList[numsList.size-1]=tv.text.toString()
+                }else{
+                    //用当前的数字去替换数组中最后一个元素
+                    numsList[numsList.size-1]=currentInputNumSB.toString()
+                }
         }
         //显示内容
         showUI()
@@ -127,6 +132,9 @@ class MainActivity : AppCompatActivity(),View.OnClickListener {
                     ope=tv.text.toString()
                     plusOrMinus=false
                 }
+                if((operatorsList[si]=="+"||operatorsList[si]=="—")&&(tv.text.toString()=="+"||tv.text.toString()=="—")){
+                    operatorsList[si]=tv.text.toString()
+                }
             }
         }else{
           if(tv.text.toString()=="—"||tv.text.toString()=="+"){
@@ -139,10 +147,10 @@ class MainActivity : AppCompatActivity(),View.OnClickListener {
               //改变状态
               isNumStart=true
               currentInputNumSB.clear()
-              //显示内容
-              showUI()
           }
         }
+        //显示内容
+        showUI()
     }
 
     //清空键--输入框和保存的StringBuilder
@@ -293,7 +301,6 @@ class MainActivity : AppCompatActivity(),View.OnClickListener {
         }
     }
 
-
     //运算
     private fun realCalculate(param1:Double,operator: String,param2:Double):Double{
         var result:Double=0.0
@@ -313,4 +320,5 @@ class MainActivity : AppCompatActivity(),View.OnClickListener {
         }
         return result
     }
+
 }
