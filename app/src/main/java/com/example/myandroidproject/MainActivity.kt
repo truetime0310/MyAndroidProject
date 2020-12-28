@@ -1,5 +1,6 @@
 package com.example.myandroidproject
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -66,11 +67,21 @@ class MainActivity : AppCompatActivity(),View.OnClickListener {
         equalSymbol.setOnClickListener {
             equalButtonClicked(it)
         }
+        //历史列表
+        his.setOnClickListener {
+            historylistsee()
+        }
+
     }
 
     override fun onClick(v: View?) {
         //数字调用这个方法
         numberButtonClick(v!!)
+    }
+    //历史列表
+    fun historylistsee(){
+        val intent=Intent(this,HistoryActivity::class.java)
+        startActivity(intent)
     }
     //%键
     fun percentButtonClick(view: View){
@@ -215,7 +226,14 @@ class MainActivity : AppCompatActivity(),View.OnClickListener {
     //等于键
     fun equalButtonClicked(view: View){
         if(result_textview.text!=""){
-            var str=result_textview.text.toString()
+            //计算过程数据
+            val pro=process_textview.text.toString()
+            //结果数据
+            val str=result_textview.text.toString()
+            //传递给listView的数据
+            val data=pro+" = "+str
+
+
             process_textview.text=str
             result_textview.text=""
             currentInputNumSB.clear()
@@ -223,6 +241,7 @@ class MainActivity : AppCompatActivity(),View.OnClickListener {
             numsList.clear()
             numsList.add(str)
             isNumStart=true
+
         }
     }
 
@@ -263,7 +282,7 @@ class MainActivity : AppCompatActivity(),View.OnClickListener {
             if(operatorsList.size>0){
                 while (true){
                     //获取i对应的运算符
-                    var operator=operatorsList[i]
+                    val operator=operatorsList[i]
 
                     //判断是不是乘除
                     if(operator=="x"||operator=="÷"){
