@@ -25,8 +25,7 @@ class MainActivity : AppCompatActivity(),View.OnClickListener {
     private var flagzero=true
     //数字开始的标识符
     private var isNumStart=true
-    //文件存储是否换行
-    private var writeflag=false
+
 
     @ExperimentalStdlibApi
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -243,11 +242,8 @@ class MainActivity : AppCompatActivity(),View.OnClickListener {
                 val output = openFileOutput("data",Context.MODE_APPEND)
                 val writer = BufferedWriter(OutputStreamWriter(output))
                 writer.use{
-                    if(writeflag){
-                        it.newLine()
-                    }
-                    writeflag=true
                     it.write(datahis)
+                    it.newLine()
                 }
             }catch (e:IOException){
                 e.printStackTrace()
