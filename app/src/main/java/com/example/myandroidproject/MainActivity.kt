@@ -1,5 +1,6 @@
 package com.example.myandroidproject
 
+import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -7,6 +8,9 @@ import android.util.Log
 import android.view.View
 import android.widget.TextView
 import kotlinx.android.synthetic.main.activity_main.*
+import java.io.BufferedWriter
+import java.io.IOException
+import java.io.OutputStreamWriter
 
 class MainActivity : AppCompatActivity(),View.OnClickListener {
     private val currentInputNumSB=StringBuilder()
@@ -21,6 +25,8 @@ class MainActivity : AppCompatActivity(),View.OnClickListener {
     private var flagzero=true
     //数字开始的标识符
     private var isNumStart=true
+    //文件存储是否换行
+    private var writeflag=false
 
     @ExperimentalStdlibApi
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -231,8 +237,21 @@ class MainActivity : AppCompatActivity(),View.OnClickListener {
             //结果数据
             val str=result_textview.text.toString()
             //传递给listView的数据
-            val data=pro+" = "+str
-
+            val datahis=pro+" = "+str
+            //将数据存入文件中
+            try {
+                val output = openFileOutput("data",Context.MODE_APPEND)
+                val writer = BufferedWriter(OutputStreamWriter(output))
+                writer.use{
+                    if(writeflag){
+                        it.newLine()
+                    }
+                    writeflag=true
+                    it.write(datahis)
+                }
+            }catch (e:IOException){
+                e.printStackTrace()
+            }
 
             process_textview.text=str
             result_textview.text=""
@@ -363,3 +382,4 @@ class MainActivity : AppCompatActivity(),View.OnClickListener {
         return result
     }
 }
+
