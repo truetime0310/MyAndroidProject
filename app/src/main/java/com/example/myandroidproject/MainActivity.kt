@@ -11,6 +11,8 @@ class MainActivity : AppCompatActivity(),View.OnClickListener {
     private val currentInputNumSB=StringBuilder()
     private val numsList= mutableListOf<String>()
     private val operatorsList= mutableListOf<String>()
+    //%相关
+    private var percentflag=true
     //判断是否为乘除后的正负
     private var ope=""
     private var plusOrMinus=true
@@ -56,6 +58,10 @@ class MainActivity : AppCompatActivity(),View.OnClickListener {
         num8.setOnClickListener(this)
         num9.setOnClickListener(this)
         decimal.setOnClickListener(this)
+//        %键
+        percent.setOnClickListener {
+            percentButtonClick(it)
+        }
         //等于符号
         equalSymbol.setOnClickListener {
             equalButtonClicked(it)
@@ -66,7 +72,18 @@ class MainActivity : AppCompatActivity(),View.OnClickListener {
         //数字调用这个方法
         numberButtonClick(v!!)
     }
+    //%键
+    fun percentButtonClick(view: View){
+        if(numsList.size>operatorsList.size){
+            var num=numsList[numsList.size-1].toDouble()
+            var numre=realCalculate(num,"x",0.01)
+            numsList[numsList.size-1]=numre.toString()
+            percentflag=false
+        }
+        showUI()
+        calculate()
 
+    }
     //数字键
     fun numberButtonClick(view: View){
         //将view强制转换为TextView
@@ -77,7 +94,7 @@ class MainActivity : AppCompatActivity(),View.OnClickListener {
             (numsList.size==0 || numsList.size==operatorsList.size)){
                 flag=false
         }
-        if(flag){
+        if(flag&&percentflag){
             currentInputNumSB.append(tv.text)
             if(isNumStart){
                 //当前输入的是一个新的数字，添加到数组中
@@ -111,6 +128,9 @@ class MainActivity : AppCompatActivity(),View.OnClickListener {
 
     //运算符键
     fun operatorButtonClicked(view: View){
+        //判断百分号
+        percentflag=true
+        //判断正负
         plusOrMinus=true
         //将view强制转换为TextView
         val tv=view as TextView
@@ -194,14 +214,16 @@ class MainActivity : AppCompatActivity(),View.OnClickListener {
 
     //等于键
     fun equalButtonClicked(view: View){
-        var str=result_textview.text.toString()
-        process_textview.text=str
-        result_textview.text=""
-        currentInputNumSB.clear()
-        operatorsList.clear()
-        numsList.clear()
-        numsList.add(str)
-        isNumStart=true
+        if(result_textview.text!=""){
+            var str=result_textview.text.toString()
+            process_textview.text=str
+            result_textview.text=""
+            currentInputNumSB.clear()
+            operatorsList.clear()
+            numsList.clear()
+            numsList.add(str)
+            isNumStart=true
+        }
     }
 
     //拼接当前运算的表达式，显示到界面上
@@ -242,6 +264,7 @@ class MainActivity : AppCompatActivity(),View.OnClickListener {
                 while (true){
                     //获取i对应的运算符
                     var operator=operatorsList[i]
+
                     //判断是不是乘除
                     if(operator=="x"||operator=="÷"){
                         //乘除直接运算--找到第二个运算数
@@ -320,5 +343,4 @@ class MainActivity : AppCompatActivity(),View.OnClickListener {
         }
         return result
     }
-
 }
